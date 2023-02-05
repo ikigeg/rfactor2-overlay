@@ -9,7 +9,6 @@ import {
   OrthographicCamera,
   WebGLRenderer,
   Mesh,
-  SphereGeometry,
   MeshBasicMaterial,
   LineBasicMaterial,
   BufferGeometry,
