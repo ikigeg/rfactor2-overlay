@@ -158,7 +158,6 @@ function updateCamera() {
 }
 
 function updateCars() {
-  console.log(props.cars[0]);
   xLook.value = props.cars[0][0];
   zLook.value = props.cars[0][2];
   props.cars.map((c, i) => {
