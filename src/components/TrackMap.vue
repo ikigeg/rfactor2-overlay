@@ -9,6 +9,7 @@ import {
   OrthographicCamera,
   WebGLRenderer,
   Mesh,
+  SphereGeometry,
   MeshBasicMaterial,
   LineBasicMaterial,
   BufferGeometry,
@@ -114,7 +115,7 @@ const me = () => {
   thing.position.x = 0;
   thing.position.y = 0;
   thing.position.z = 0;
-  thing.visible = false;
+  // thing.visible = false;
   thing.rotateX(90);
   return thing;
 };
@@ -141,6 +142,9 @@ const loop = () => {
 
   renderer.render(scene, camera);
 
+  // racerRefs[0].rotateZ(racerRefs[0].rotation.z + 1);
+  // console.log(racerRefs[0].rotation);
+
   requestAnimationFrame(loop);
 };
 
@@ -157,9 +161,17 @@ function updateCamera() {
   camera.lookAt(data.xLook, data.yLook, data.zLook);
 }
 
+const r = (radians: number) => {
+  return (radians * 180) / Math.PI;
+};
 function updateCars() {
   xLook.value = props.cars[0][0];
   zLook.value = props.cars[0][2];
+
+  const o = props.cars[0];
+  const rot = new Vector3(o[0], o[1], o[2]).angleTo(racerRefs[0].position);
+  racerRefs[0].rotateZ(r(rot));
+
   props.cars.map((c, i) => {
     racerRefs[i].position.x = c[0];
     racerRefs[i].position.y = c[1];

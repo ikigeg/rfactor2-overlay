@@ -22,10 +22,16 @@ wsControlPanel.onmessage = (event) => {
   const { type, body } = JSON.parse(event.data);
 
   if (type === "standings") {
-    console.log(body);
-    const newCars = (
-      Object.values(body) as unknown as { carPosition: TypedTrackMap }[]
-    ).map((b: { carPosition: TypedTrackMap }) => [
+    const s = Object.values(body) as unknown as {
+      carPosition: TypedTrackMap;
+      carVelocity: number;
+    }[];
+    if (!s) {
+      return;
+    }
+
+    // s.map((b) => console.log(b.carPosition, b.carVelocity));
+    const newCars = s.map((b: { carPosition: TypedTrackMap }) => [
       c(b.carPosition.x),
       c(b.carPosition.y),
       c(b.carPosition.z),
