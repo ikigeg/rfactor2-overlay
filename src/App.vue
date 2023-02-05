@@ -14,7 +14,7 @@ const cars = ref([] as number[][]);
 const wsControlPanel = new WebSocket(
   "ws://localhost:5397/websocket/controlpanel"
 );
-
+let stuff: any[] = [];
 wsControlPanel.onopen = (event) => {
   console.log("Successfully connected to the control panel server >", event);
 };
@@ -37,6 +37,12 @@ wsControlPanel.onmessage = (event) => {
       c(b.carPosition.z),
     ]);
     cars.value.splice(0, cars.value.length, ...newCars);
+
+    stuff.push(body[0]);
+    if (stuff.length === 50) {
+      console.log(JSON.stringify(stuff));
+      stuff.splice(0, 50);
+    }
   }
 };
 

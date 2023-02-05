@@ -9,7 +9,7 @@ import {
   OrthographicCamera,
   WebGLRenderer,
   Mesh,
-  SphereGeometry,
+  Euler,
   MeshBasicMaterial,
   LineBasicMaterial,
   BufferGeometry,
@@ -52,14 +52,14 @@ const data = reactive({
 const experience = ref<HTMLCanvasElement | null>(null);
 let renderer: WebGLRenderer;
 
-const width = 600; //window.innerWidth;
-const height = 600; //window.innerHeight;
+const width = 500; //window.innerWidth;
+const height = 500; //window.innerHeight;
 
 const scene = new Scene();
 
 let cameraType = "ortho";
 
-const distance = 800;
+const distance = 500;
 const camera =
   cameraType === "ortho"
     ? new OrthographicCamera(
@@ -115,6 +115,7 @@ const me = () => {
   thing.position.x = 0;
   thing.position.y = 0;
   thing.position.z = 0;
+  thing.geometry.center();
   // thing.visible = false;
   thing.rotateX(90);
   return thing;
@@ -140,6 +141,9 @@ const loop = () => {
   updateRenderer();
   updateCamera();
 
+  // console.log(racerRefs[0].rotation.z);
+  // racerRefs[0].rotation.z += 0.01;
+
   renderer.render(scene, camera);
 
   // racerRefs[0].rotateZ(racerRefs[0].rotation.z + 1);
@@ -157,8 +161,9 @@ function updateRenderer() {
 }
 
 function updateCamera() {
-  camera.position.set(data.xPos, data.yPos, data.zPos);
-  camera.lookAt(data.xLook, data.yLook, data.zLook);
+  // camera.position.set(data.xPos, data.yPos, data.zPos);
+  // camera.lookAt(data.xLook, data.yLook, data.zLook);
+  // camera.position.x += 10;
 }
 
 const r = (radians: number) => {
@@ -169,8 +174,29 @@ function updateCars() {
   zLook.value = props.cars[0][2];
 
   const o = props.cars[0];
-  const rot = new Vector3(o[0], o[1], o[2]).angleTo(racerRefs[0].position);
-  racerRefs[0].rotateZ(r(rot));
+  const oldPos = new Vector3(
+    racerRefs[0].position.x,
+    racerRefs[0].position.z,
+    0
+  );
+  const newPos = new Vector3(o[0], o[2], 0);
+  const angle = oldPos.angleTo(newPos);
+  // racerRefs[0].rotateZ(r(rot));
+  const a = new Euler(0, 1, angle, "XYZ");
+  // console.log({ newPos, angle, a, oldPos, deg: (angle * 180) / Math.PI });
+  // rot.applyEuler(a);
+
+  racerRefs[0].rotateZ(angle);
+  // const ang = oldPos.angleTo(rot);
+
+  // racerRefs[0].up.copy(
+  //   new Vector3(
+  //     racerRefs[0].position.x,
+  //     racerRefs[0].position.x,
+  //     racerRefs[0].position.x
+  //   )
+  // );
+  // racerRefs[0].lookAt(new Vector3(o[0], o[1], o[2]));
 
   props.cars.map((c, i) => {
     racerRefs[i].position.x = c[0];
@@ -178,6 +204,11 @@ function updateCars() {
     racerRefs[i].position.z = c[2];
     racerRefs[i].visible = true;
   });
+
+  // camera.position.set(props.cars[0][0], props.cars[0][1], data.zPos);
+  // camera.lookAt(data.xLook, data.yLook, data.zLook);
+  camera.position.x = props.cars[0][0];
+  camera.lookAt(props.cars[0][0], data.yLook, data.zLook);
 }
 
 watch(props.cars, updateCars);
@@ -189,7 +220,10 @@ onMounted(() => {
     antialias: true,
     alpha: true,
   });
-  renderer.setClearColor(0x000000, 0);
+  // renderer.setClearColor(0x000000, 0);
+
+  camera.position.set(data.xPos, data.yPos, data.zPos);
+  camera.lookAt(data.xLook, data.yLook, data.zLook);
 
   loop();
 });
